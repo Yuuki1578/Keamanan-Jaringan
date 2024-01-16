@@ -2,7 +2,7 @@
  * Implementasi Caesar Cipher di C
  * GCC/CLANG versi 17.0.6
  * build aarch64-unknown-linux-android24
- * Lisensi : GNU Public License
+ * Lisensi : GNU General Public License 3
  */
 
 #include <stdio.h>  // standar i/o stream
