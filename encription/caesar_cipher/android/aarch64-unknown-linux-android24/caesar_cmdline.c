@@ -10,6 +10,15 @@
 #include <string.h> // standar string utility
 #include <time.h>   // standar time formatting
 
+// text color
+#define RED "\e[1;31m"
+#define GREEN "\e[1;32m"
+#define BLUE "\e[1;34m"
+#define CYAN "\e[1;36m"
+#define YELLOW "\e[1;33m"
+#define PURPLE "\e[1;35m"
+#define WHITE "\e[0m"
+
 char *encrypt(char *unencrypted, int tokens) {
 
   // alokasi memori sesuai jumlah char
@@ -23,7 +32,7 @@ char *encrypt(char *unencrypted, int tokens) {
     if (unencrypted[i] == space) {
 
       // string kembalian akan menjadi separator
-      encrypted[i] = unencrypted[i];
+      encrypted[i] = ' ';//unencrypted[i];
     } else {
       // konversi integer ke char menggunakan formula
       // E(n, key) = (n + key) % 26 sesuai jumlah abjad
@@ -47,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     // exit code 1 jika passing tidak berhasil
     // error handling sederhana untuk argumen
-    printf("Not enough argument!\n");
+    printf("%s[!] Err%s, Not enough argument!\n", RED, WHITE);
 
     // exit(1) untuk failed
     exit(1);
@@ -65,9 +74,11 @@ int main(int argc, char *argv[]) {
 
     // fungsi encrypt!
     _return = encrypt(argv[1], tokens);
-    printf("[!] Returning %s from %s\n", _return, argv[1]);
-    printf(" • Status\t: Ok\n • Origin\t: %s\n • Encrypted\t: %s\n", argv[1],
-           _return);
+    printf("%s[!] Returning %s%s %sfrom %s%s\n\n", YELLOW, CYAN, _return, WHITE, CYAN,
+           argv[1]);
+    printf("%s • Status\t: %sOk\n", GREEN, CYAN);
+    printf("%s • Origin\t: %s%s\n", GREEN, CYAN, argv[1]);
+    printf("%s • Encrypted\t: %s%s\n\n", GREEN, CYAN, _return);
 
     // I/O File stream handler
     // digunakan untuk membuat log file
@@ -80,8 +91,8 @@ int main(int argc, char *argv[]) {
     // exit(0) untuk success
     free(_return);
     exit(0);
-  } else {
-    printf("[!] String literal interrupted! exit 1");
+  } else if ((argc == 2) || (argv[2] == NULL)) {
+    printf("%s[!] Err%s, keys cannot be NULL\n", RED, WHITE);
     exit(1);
   }
   return 0;
