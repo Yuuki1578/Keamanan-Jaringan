@@ -1,8 +1,8 @@
 /*
  * Implementasi Caesar Cipher di C
- * GCC/CLANG versi 17.0.6
+ * LLVM/CLANG versi 17.0.6
  * build aarch64-unknown-linux-android24
- * Lisensi : GNU Public License
+ * Lisensi : GNU General Public License 3
  */
 
 #include <stdio.h>  // standar i/o stream
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     // exit code 1 jika passing tidak berhasil
     // error handling sederhana untuk argumen
-    printf("%s[!] Err%s, Not enough argument!\n", RED, WHITE);
+    printf("%s[!] Err%s Not enough argument!\n", RED, WHITE);
 
     // exit(1) untuk failed
     exit(1);
@@ -78,11 +78,12 @@ int main(int argc, char *argv[]) {
            argv[1]);
     printf("%s • Status\t: %sOk\n", GREEN, CYAN);
     printf("%s • Origin\t: %s%s\n", GREEN, CYAN, argv[1]);
-    printf("%s • Encrypted\t: %s%s\n\n", GREEN, CYAN, _return);
-
+    printf("%s • Encrypted\t: %s%s\n", GREEN, CYAN, _return);
+    printf("%s • Tokens\t: %s%s\n\n", GREEN, CYAN, argv[2]);
+    
     // I/O File stream handler
     // digunakan untuk membuat log file
-    FILE *fstream; // typedef fstream
+    FILE *fstream; // FILE pointers fstream
     fstream = fopen("/data/data/com.termux/files/home/.csr_history",
                     "w"); // open file
     fprintf(fstream, ""); // print >> file
@@ -92,7 +93,9 @@ int main(int argc, char *argv[]) {
     free(_return);
     exit(0);
   } else if ((argc == 2) || (argv[2] == NULL)) {
-    printf("%s[!] Err%s, keys cannot be NULL\n", RED, WHITE);
+    printf("%s[!] Err%s keys cannot be NULL\n", RED, WHITE);
+    exit(1);
+  } else {
     exit(1);
   }
   return 0;
