@@ -2,7 +2,7 @@
  * Implementasi Caesar Cipher di C
  * GCC/CLANG versi 17.0.6
  * build aarch64-unknown-linux-android24
- * Lisensi : GNU General Public License 3
+ * Lisensi : GNU Public License
  */
 
 #include <stdio.h>  // standar i/o stream
@@ -14,14 +14,22 @@ char *encrypt(char *unencrypted, int tokens) {
 
   // alokasi memori sesuai jumlah char
   char *encrypted = malloc(sizeof(unencrypted));
+  char space = '_'; // separator
 
   // iterasi dasar
   for (int i = 0; i < strlen(unencrypted); i++) {
 
-    // konversi integer ke char menggunakan formula
-    // E(n, key) = (n + key) % 26 sesuai jumlah abjad
-    char ascii_list = (int)(unencrypted[i] + tokens - 97) % 26 + 97;
-    encrypted[i] = ascii_list;
+    // jika string[i] adalah separator
+    if (unencrypted[i] == space) {
+
+      // string kembalian akan menjadi separator
+      encrypted[i] = unencrypted[i];
+    } else {
+      // konversi integer ke char menggunakan formula
+      // E(n, key) = (n + key) % 26 sesuai jumlah abjad
+      char ascii_list = (int)(unencrypted[i] + tokens - 97) % 26 + 97;
+      encrypted[i] = ascii_list;
+    }
   }
   return encrypted;
 
@@ -50,10 +58,13 @@ int main(int argc, char *argv[]) {
     // argument 2 != NULL
   } else if ((argc > 1) && (argv[1] != NULL) && (argv[2] != NULL)) {
 
-    int tokens = atoi(argv[2]);
+    int tokens = atoi(argv[2]); // string literal to integer
+
+    // alokasi memori dengan ukuran sizeof(string)
+    char *_return = malloc(sizeof(argv[1]));
 
     // fungsi encrypt!
-    char *_return = encrypt(argv[1], tokens);
+    _return = encrypt(argv[1], tokens);
     printf("[!] Returning %s from %s\n", _return, argv[1]);
     printf(" • Status\t: Ok\n • Origin\t: %s\n • Encrypted\t: %s\n", argv[1],
            _return);
@@ -67,7 +78,11 @@ int main(int argc, char *argv[]) {
     fclose(fstream);      // fileclose
 
     // exit(0) untuk success
+    free(_return);
     exit(0);
+  } else {
+    printf("[!] String literal interrupted! exit 1");
+    exit(1);
   }
   return 0;
 }
