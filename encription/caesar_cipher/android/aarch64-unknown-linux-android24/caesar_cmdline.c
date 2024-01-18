@@ -32,11 +32,15 @@ char *encrypt(char *unencrypted, int tokens) {
     if (unencrypted[i] == space) {
 
       // string kembalian akan menjadi separator
-      encrypted[i] = ' ';//unencrypted[i];
+      encrypted[i] = ' ';
     } else {
       // konversi integer ke char menggunakan formula
       // E(n, key) = (n + key) % 26 sesuai jumlah abjad
       char ascii_list = (int)(unencrypted[i] + tokens - 97) % 26 + 97;
+
+      // bisa juga dengan
+      // int ascii_int = (unencrypted[i] + tokens - 97) % 26 + 97;
+      // encrypted[i] = (char) ascii_int;
       encrypted[i] = ascii_list;
     }
   }
@@ -74,13 +78,13 @@ int main(int argc, char *argv[]) {
 
     // fungsi encrypt!
     _return = encrypt(argv[1], tokens);
-    printf("%s[!] Returning %s%s %sfrom %s%s\n\n", YELLOW, CYAN, _return, WHITE, CYAN,
-           argv[1]);
+    printf("%s[!] Returning %s%s %sfrom %s%s\n\n", YELLOW, CYAN, _return, WHITE,
+           CYAN, argv[1]);
     printf("%s • Status\t: %sOk\n", GREEN, CYAN);
     printf("%s • Origin\t: %s%s\n", GREEN, CYAN, argv[1]);
     printf("%s • Encrypted\t: %s%s\n", GREEN, CYAN, _return);
     printf("%s • Tokens\t: %s%s\n\n", GREEN, CYAN, argv[2]);
-    
+
     // I/O File stream handler
     // digunakan untuk membuat log file
     FILE *fstream; // FILE pointers fstream
