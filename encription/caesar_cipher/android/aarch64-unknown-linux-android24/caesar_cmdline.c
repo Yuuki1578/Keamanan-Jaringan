@@ -9,8 +9,6 @@
 #include <stdlib.h> // standar alokasi memori ke char* / char[]
 #include <string.h> // standar string utility
 
-#define ENCODE "-e"
-
 // text color
 #define RED "\e[1;31m"
 #define GREEN "\e[1;32m"
@@ -31,7 +29,7 @@ char *encrypt(char *unencrypted, int tokens) {
     if (unencrypted[i] == space) {
 
       // string kembalian akan menjadi separator
-      encrypted[i] = space;
+      encrypted[i] = ' ';
     } else {
       // konversi integer ke char menggunakan formula
       // E(n, key) = (n + key) % 26 sesuai jumlah abjad
@@ -44,10 +42,6 @@ char *encrypt(char *unencrypted, int tokens) {
     }
   }
   return encrypted;
-
-  // jangan lupa di free memory ygy
-  // sebagai pencegahan dari memory leak
-  free(encrypted);
 }
 
 /*
@@ -58,28 +52,25 @@ char *encrypt(char *unencrypted, int tokens) {
 char *decrypt(char *encrypted, int reverse){
 
   char *unencrypted = malloc(sizeof(encrypted)); // alokasi memori
-  char space = '_';  // separator identifier
   
   // iterasi
   for(int i=0; i<strlen(encrypted); i++){ 
 
     // jika text ke i = separator
-    if(encrypted[i] == space){
-      unencrypted[i] = space;
+    if(encrypted[i] >= 'a' && encrypted[i] <= 'z'){
+      
+      // pos adalah posisi alphabet dalam digit
+      int pos = encrypted[i] - 'a'; // a == 97 dalam ascii
+      int new_pos = (pos - reverse + 26) % 26;
+      unencrypted[i] = 'a' + new_pos;
 
     } else { // jika tidak :
-
-      // ascii dari integer ke char 
-      // char = (int)(formula)atau
-      // int = (formula)
-      // char = int
-      char ascii_list = (int)(encrypted[i] - reverse - 97) % 26 + 97;
-      unencrypted[i] = ascii_list;
+      
+      unencrypted[i] = encrypted[i];
     }
   }
 
   return unencrypted; // kembalian nilai untuk decrypt
-  free(unencrypted); // free memori dari heap
 }
 // end function
 
@@ -87,6 +78,8 @@ int main(int argc, char *argv[]) {
 
   // passing argumen 1 untuk string
   // passing argumen 2 untuk token
+
+  char *encode = "-e";
 
   if (argc == 1) {
 
@@ -119,7 +112,7 @@ int main(int argc, char *argv[]) {
     free(_return);
     exit(0);
   } else if ((argc == 4) && (argv[1] != NULL) && (argv[2] != NULL) &&
-             (strcmp(argv[3], ENCODE) == 0)) {
+             (strcmp(argv[3], encode) == 0)) {
 
     int reverse = atoi(argv[2]);
 
