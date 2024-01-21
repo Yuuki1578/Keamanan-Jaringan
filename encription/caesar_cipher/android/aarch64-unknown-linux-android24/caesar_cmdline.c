@@ -8,15 +8,14 @@
 #include <stdio.h>  // standar i/o stream
 #include <stdlib.h> // standar alokasi memori ke char* / char[]
 #include <string.h> // standar string utility
-#include <time.h>   // standar time formatting
+
+#define ENCODE "-e"
 
 // text color
 #define RED "\e[1;31m"
 #define GREEN "\e[1;32m"
-#define BLUE "\e[1;34m"
 #define CYAN "\e[1;36m"
 #define YELLOW "\e[1;33m"
-#define PURPLE "\e[1;35m"
 #define WHITE "\e[0m"
 
 char *encrypt(char *unencrypted, int tokens) {
@@ -32,7 +31,7 @@ char *encrypt(char *unencrypted, int tokens) {
     if (unencrypted[i] == space) {
 
       // string kembalian akan menjadi separator
-      encrypted[i] = ' ';
+      encrypted[i] = space;
     } else {
       // konversi integer ke char menggunakan formula
       // E(n, key) = (n + key) % 26 sesuai jumlah abjad
@@ -50,6 +49,39 @@ char *encrypt(char *unencrypted, int tokens) {
   // sebagai pencegahan dari memory leak
   free(encrypted);
 }
+
+/*
+ * fungsi untuk mendeskripsi cipher text
+ * hanya membalikkan formula dari (+) ke (-) 
+*/
+
+char *decrypt(char *encrypted, int reverse){
+
+  char *unencrypted = malloc(sizeof(encrypted)); // alokasi memori
+  char space = '_';  // separator identifier
+  
+  // iterasi
+  for(int i=0; i<strlen(encrypted); i++){ 
+
+    // jika text ke i = separator
+    if(encrypted[i] == space){
+      unencrypted[i] = space;
+
+    } else { // jika tidak :
+
+      // ascii dari integer ke char 
+      // char = (int)(formula)atau
+      // int = (formula)
+      // char = int
+      char ascii_list = (int)(encrypted[i] - reverse - 97) % 26 + 97;
+      unencrypted[i] = ascii_list;
+    }
+  }
+
+  return unencrypted; // kembalian nilai untuk decrypt
+  free(unencrypted); // free memori dari heap
+}
+// end function
 
 int main(int argc, char *argv[]) {
 
@@ -69,7 +101,7 @@ int main(int argc, char *argv[]) {
     // argument count > 1
     // argument 1 != NULL
     // argument 2 != NULL
-  } else if ((argc > 1) && (argv[1] != NULL) && (argv[2] != NULL)) {
+  } else if ((argc == 3) && (argv[1] != NULL) && (argv[2] != NULL)) {
 
     int tokens = atoi(argv[2]); // string literal to integer
 
@@ -84,18 +116,23 @@ int main(int argc, char *argv[]) {
     printf("%s • Origin\t: %s%s\n", GREEN, CYAN, argv[1]);
     printf("%s • Encrypted\t: %s%s\n", GREEN, CYAN, _return);
     printf("%s • Tokens\t: %s%s\n\n", GREEN, CYAN, argv[2]);
-
-    // I/O File stream handler
-    // digunakan untuk membuat log file
-    FILE *fstream; // FILE pointers fstream
-    fstream = fopen("/data/data/com.termux/files/home/.csr_history",
-                    "w"); // open file
-    fprintf(fstream, ""); // print >> file
-    fclose(fstream);      // fileclose
-
-    // exit(0) untuk success
     free(_return);
     exit(0);
+  } else if ((argc == 4) && (argv[1] != NULL) && (argv[2] != NULL) &&
+             (strcmp(argv[3], ENCODE) == 0)) {
+
+    int reverse = atoi(argv[2]);
+
+    char *unencrypted = malloc(sizeof(argv[1]));
+    unencrypted = decrypt(argv[1], reverse);
+
+    printf("%s[!] Returning %s%s %sfrom %s%s\n\n", YELLOW, CYAN, unencrypted, WHITE,
+           CYAN, argv[1]);
+    printf("%s • Status\t: %sOk\n", GREEN, CYAN);
+    printf("%s • Encrypted\t: %s%s\n", GREEN, CYAN, argv[1]);
+    printf("%s • Decrypted\t: %s%s\n", GREEN, CYAN, unencrypted);
+    printf("%s • Tokens\t: %s%s\n\n", GREEN, CYAN, argv[2]);
+    
   } else if ((argc == 2) || (argv[2] == NULL)) {
     printf("%s[!] Err%s keys cannot be NULL\n", RED, WHITE);
     exit(1);
