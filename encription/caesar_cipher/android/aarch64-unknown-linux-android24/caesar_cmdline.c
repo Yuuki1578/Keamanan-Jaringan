@@ -33,7 +33,7 @@ char *encrypt(char *unencrypted, int tokens) {
     } else {
       // konversi integer ke char menggunakan formula
       // E(n, key) = (n + key) % 26 sesuai jumlah abjad
-      char ascii_list = (int)(unencrypted[i] + tokens - 97) % 26 + 97;
+      char ascii_list = (int)(unencrypted[i] + tokens - 'a') % 26 + 'a';
 
       // bisa juga dengan
       // int ascii_int = (unencrypted[i] + tokens - 97) % 26 + 97;
@@ -46,30 +46,32 @@ char *encrypt(char *unencrypted, int tokens) {
 
 /*
  * fungsi untuk mendeskripsi cipher text
- * hanya membalikkan formula dari (+) ke (-) 
-*/
+ *
+ */
 
-char *decrypt(char *encrypted, int reverse){
+char *decrypt(char *encrypted, int reverse) {
 
   char *unencrypted = malloc(sizeof(encrypted)); // alokasi memori
-  
-  // iterasi
-  for(int i=0; i<strlen(encrypted); i++){ 
 
-    // jika text ke i = separator
-    if(encrypted[i] >= 'a' && encrypted[i] <= 'z'){
-      
+  // iterasi
+  for (int i = 0; i < strlen(encrypted); i++) {
+
+    // jika huruf ke i lebih besar / sama dengan 'a' atau 97
+    // jika huruf ke i lebih kecil / sama dengam 'z' atau 123
+    // percabangan menuju TRUE jika huruf kecil
+
+    if ((encrypted[i] >= 'a') && (encrypted[i] <= 'z')) {
+
       // pos adalah posisi alphabet dalam digit
       int pos = encrypted[i] - 'a'; // a == 97 dalam ascii
+      // new_pos = posisi baru jika sudah di shift
       int new_pos = (pos - reverse + 26) % 26;
       unencrypted[i] = 'a' + new_pos;
 
-    } else { // jika tidak :
-      
+    } else {
       unencrypted[i] = encrypted[i];
     }
   }
-
   return unencrypted; // kembalian nilai untuk decrypt
 }
 // end function
@@ -119,13 +121,13 @@ int main(int argc, char *argv[]) {
     char *unencrypted = malloc(sizeof(argv[1]));
     unencrypted = decrypt(argv[1], reverse);
 
-    printf("%s[!] Returning %s%s %sfrom %s%s\n\n", YELLOW, CYAN, unencrypted, WHITE,
-           CYAN, argv[1]);
+    printf("%s[!] Returning %s%s %sfrom %s%s\n\n", YELLOW, CYAN, unencrypted,
+           WHITE, CYAN, argv[1]);
     printf("%s • Status\t: %sOk\n", GREEN, CYAN);
     printf("%s • Encrypted\t: %s%s\n", GREEN, CYAN, argv[1]);
     printf("%s • Decrypted\t: %s%s\n", GREEN, CYAN, unencrypted);
     printf("%s • Tokens\t: %s%s\n\n", GREEN, CYAN, argv[2]);
-    
+
   } else if ((argc == 2) || (argv[2] == NULL)) {
     printf("%s[!] Err%s keys cannot be NULL\n", RED, WHITE);
     exit(1);
